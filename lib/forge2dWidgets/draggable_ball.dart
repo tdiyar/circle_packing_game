@@ -45,7 +45,7 @@ class DraggableBall extends Ball with Draggable, Tappable {
     } else {
       if (isCollidabe) {
         if (!beenTappedToStayNotCollidable) {
-          if (body.contacts.isEmpty) {
+          if (DoesNotOverlapWithOthers()) {
             isCollidabe = false;
             paint = isCollidabe ? originalPaint : paintCollide;
             body.fixtures.forEach((element) {
@@ -70,7 +70,7 @@ class DraggableBall extends Ball with Draggable, Tappable {
         element.setSensor(true);
       });
     } else {
-      if (body.contacts.isEmpty) {
+      if (DoesNotOverlapWithOthers()) {
         isCollidabe = false;
         body.fixtures.forEach((element) {
           element.setSensor(false);
@@ -79,6 +79,19 @@ class DraggableBall extends Ball with Draggable, Tappable {
     }
     paint = isCollidabe ? originalPaint : paintCollide;
     return ret;
+  }
+
+  bool DoesNotOverlapWithOthers() {
+    if (body.contacts.isEmpty) {
+      return true;
+    }
+    bool ans = true;
+    body.contacts.forEach((element) {
+      if (element.isTouching()) {
+        ans = false;
+      }
+    });
+    return ans;
   }
 
   @override
@@ -93,7 +106,8 @@ class DraggableBall extends Ball with Draggable, Tappable {
       });
     } else {
       beenTappedToStayNotCollidable = false;
-      if (body.contacts.isEmpty) {
+
+      if (DoesNotOverlapWithOthers()) {
         beenTappedToStayNotCollidable = false;
         isCollidabe = !isCollidabe;
         body.fixtures.forEach((element) {
@@ -112,7 +126,7 @@ class DraggableBall extends Ball with Draggable, Tappable {
     touch = Vector2(details.raw.localPosition.dx,
         -(details.raw.localPosition.dy - yOffSet));
     initialTouchOffSet = touch - body.position;
-    initialTouchOffSet = initialTouchOffSet - Vector2(0, yOffSet);
+    initialTouchOffSet = initialTouchOffSet - Vector2(0, yOffSet); //yOffSet
 
     paint = isCollidabe ? originalPaint1 : paintCollide1;
     dragOn = true;
@@ -130,7 +144,7 @@ class DraggableBall extends Ball with Draggable, Tappable {
   @override
   bool onDragEnd(int pointerId, DragEndInfo details) {
     dragOn = false;
-    if (body.contacts.isEmpty) {
+    if (DoesNotOverlapWithOthers()) {
       isCollidabe = false;
       paint = isCollidabe ? originalPaint : paintCollide;
       body.fixtures.forEach((element) {
