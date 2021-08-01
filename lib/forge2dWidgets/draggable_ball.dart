@@ -16,57 +16,128 @@ import 'package:flame/palette.dart';
 import 'package:flame_forge2d/body_component.dart';
 import 'package:flame/game.dart';
 
-class DraggableBall extends Ball with Draggable {
+class DraggableBall extends Ball with Draggable, Tappable {
   DraggableBall(Vector2 position, double radius)
       : super(position, radius: radius) {
     originalPaint = Paint()..color = Colors.amber;
-    paint = originalPaint;
+    paint = isCollidabe ? originalPaint : paintCollide;
   }
 
+  Paint paintCollide = Paint()..color = Colors.deepPurpleAccent;
+  Paint paintCollide1 = Paint()..color = Colors.deepPurpleAccent.shade200;
+  Paint originalPaint1 = Paint()..color = Colors.amber.shade200;
+
   bool dragOn = false;
+  bool isCollidabe = true;
+  bool beenTappedToStayNotCollidable = false;
   Vector2 touch = Vector2(0, 0);
   Vector2 initialTouchOffSet = Vector2(0, 0);
+  double yOffSet = 80;
+
   @override
   void update(double dt) {
     super.update(dt);
+
     if (dragOn) {
-      body.linearDamping = 2.6;
       final worldDelta = Vector2(-1, -1)
         ..multiply(body.position - touch + initialTouchOffSet);
       body.applyForce(worldDelta * 800);
+    } else {
+      if (isCollidabe) {
+        if (!beenTappedToStayNotCollidable) {
+          if (body.contacts.isEmpty) {
+            isCollidabe = false;
+            paint = isCollidabe ? originalPaint : paintCollide;
+            body.fixtures.forEach((element) {
+              element.setSensor(false);
+            });
+          }
+        }
+      }
     }
+
     world.stepDt(dt);
+  }
+
+  @override
+  Future<void> onLoad() {
+    // TODO: implement onLoad
+    Future<void> ret = super.onLoad();
+
+    if (!isCollidabe) {
+      isCollidabe = true;
+      body.fixtures.forEach((element) {
+        element.setSensor(true);
+      });
+    } else {
+      if (body.contacts.isEmpty) {
+        isCollidabe = false;
+        body.fixtures.forEach((element) {
+          element.setSensor(false);
+        });
+      }
+    }
+    paint = isCollidabe ? originalPaint : paintCollide;
+    return ret;
+  }
+
+  @override
+  bool onTapUp(TapUpInfo details) {
+    print("TAP");
+
+    if (!isCollidabe) {
+      isCollidabe = !isCollidabe;
+      beenTappedToStayNotCollidable = true;
+      body.fixtures.forEach((element) {
+        element.setSensor(true);
+      });
+    } else {
+      beenTappedToStayNotCollidable = false;
+      if (body.contacts.isEmpty) {
+        beenTappedToStayNotCollidable = false;
+        isCollidabe = !isCollidabe;
+        body.fixtures.forEach((element) {
+          element.setSensor(false);
+        });
+      }
+    }
+    paint = isCollidabe ? originalPaint : paintCollide;
+    return true;
   }
 
   @override
   bool onDragStart(int pointerId, DragStartInfo details) {
     // TODO: Change this to normal; 80???
-    touch = Vector2(
-        details.raw.localPosition.dx, -(details.raw.localPosition.dy - 80));
+
+    touch = Vector2(details.raw.localPosition.dx,
+        -(details.raw.localPosition.dy - yOffSet));
     initialTouchOffSet = touch - body.position;
-    initialTouchOffSet = initialTouchOffSet - Vector2(0, 80);
-    paint = randomPaint();
+    initialTouchOffSet = initialTouchOffSet - Vector2(0, yOffSet);
+
+    paint = isCollidabe ? originalPaint1 : paintCollide1;
     dragOn = true;
-    body.fixtures.forEach((element) {
-      element.setSensor(true);
-    });
+
     return true;
   }
 
   @override
   bool onDragUpdate(int pointerId, DragUpdateInfo details) {
-    touch = Vector2(
-        details.raw.localPosition.dx, -(details.raw.localPosition.dy - 80));
+    touch = Vector2(details.raw.localPosition.dx,
+        -(details.raw.localPosition.dy - yOffSet));
     return true;
   }
 
   @override
   bool onDragEnd(int pointerId, DragEndInfo details) {
-    paint = originalPaint;
     dragOn = false;
-    body.fixtures.forEach((element) {
-      element.setSensor(false);
-    });
+    if (body.contacts.isEmpty) {
+      isCollidabe = false;
+      paint = isCollidabe ? originalPaint : paintCollide;
+      body.fixtures.forEach((element) {
+        element.setSensor(false);
+      });
+    }
+
     return true;
   }
 }

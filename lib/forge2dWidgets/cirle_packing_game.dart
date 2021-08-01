@@ -12,7 +12,8 @@ import 'draggable_ball.dart';
 import 'wall.dart'; // createBoundaries
 import 'shape_to_fill.dart'; // ShapeToFill
 
-class CirlePackingGame extends Forge2DGame with HasDraggableComponents {
+class CirlePackingGame extends Forge2DGame
+    with HasDraggableComponents, HasTappableComponents {
   int shapeId;
   int numberOfBalls;
   @override
