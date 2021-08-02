@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/cupertino.dart' hide Draggable;
@@ -16,8 +14,11 @@ import 'package:flame/palette.dart';
 import 'package:flame_forge2d/body_component.dart';
 import 'package:flame/game.dart';
 
+import 'shape_to_fill.dart';
+
 class DraggableBall extends Ball with Draggable, Tappable {
-  DraggableBall(Vector2 position, double radius)
+  ShapeToFill shape;
+  DraggableBall(Vector2 position, double radius, this.shape)
       : super(position, radius: radius) {
     originalPaint = Paint()..color = Colors.amber;
     paint = isCollidabe ? originalPaint : paintCollide;
@@ -33,10 +34,16 @@ class DraggableBall extends Ball with Draggable, Tappable {
   Vector2 touch = Vector2(0, 0);
   Vector2 initialTouchOffSet = Vector2(0, 0);
   double yOffSet = 80;
+  bool inSide = false;
+
+  bool isInSideShape() {
+    return shape.IsBallInSide(this);
+  }
 
   @override
   void update(double dt) {
     super.update(dt);
+    inSide = isInSideShape() && (!isCollidabe);
 
     if (dragOn) {
       final worldDelta = Vector2(-1, -1)
@@ -81,6 +88,7 @@ class DraggableBall extends Ball with Draggable, Tappable {
     return ret;
   }
 
+  // ignore: non_constant_identifier_names
   bool DoesNotOverlapWithOthers() {
     if (body.contacts.isEmpty) {
       return true;
@@ -190,7 +198,7 @@ class Ball extends BodyComponent {
 
     final fixtureDef = FixtureDef(shape)
       ..restitution = 1.5
-      ..density = 1.0 / (pow(radius, 2))
+      ..density = 1.0 / (math.pow(radius, 2))
       ..friction = 0.8;
 
     final bodyDef = BodyDef()

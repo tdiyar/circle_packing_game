@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:forge2d/forge2d.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:flame/extensions.dart';
@@ -10,38 +12,19 @@ import 'package:flame/game.dart';
 import 'draggable_ball.dart';
 import 'wall.dart'; // createBoundaries
 import 'shape_to_fill.dart'; // ShapeToFill
+import 'constantCircleSizes.dart'; // SIZES_FOR_SQUARE
 
 class CirlePackingGame extends Forge2DGame
     with HasDraggableComponents, HasTappableComponents {
   int shapeId;
   int numberOfBalls;
   double sizeOfSquar = 140.0;
-
-  final sizes = <double>[
-    2.0062815324405303,
-    4.133087230375679,
-    5.386153048372581,
-    6.792800755181921,
-    8.230467276712174,
-    9.388098856997482,
-    10.792792275814636,
-    12.237876134479011,
-    14.352105775714026,
-    15.435604814013534,
-    16.4228693610223,
-    17.52890435071871,
-    19.741873435408316,
-    20.838408802849305,
-    21.708037636748028,
-    23.891172328897884,
-    24.96719256968056,
-    26.235535356600572,
-    27.696806899096718,
-    28.71703451903279,
-  ];
+  List<DraggableBall> balls = <DraggableBall>[];
+  ShapeToFill? shape;
+  BuildContext context;
 
   @override
-  CirlePackingGame(this.shapeId, this.numberOfBalls)
+  CirlePackingGame(this.shapeId, this.numberOfBalls, this.context)
       : super(gravity: Vector2.all(0.0), zoom: 1.0);
 
   @override
@@ -54,16 +37,75 @@ class CirlePackingGame extends Forge2DGame
     assert(numberOfBalls > 0);
 
     final area_1 = 3.14159265 *
-        (sizeOfSquar / sizes[numberOfBalls - 1]) *
-        (sizeOfSquar / sizes[numberOfBalls - 1]);
+        (sizeOfSquar / SIZES_FOR_SQUARE[numberOfBalls - 1]) *
+        (sizeOfSquar / SIZES_FOR_SQUARE[numberOfBalls - 1]);
     print(area_1);
 
-    Vector2 position = center - Vector2(0, 250);
+    Vector2 position = center - Vector2(190, 250);
+    final offSetXEach = 350 / this.numberOfBalls;
+
+    shape = ShapeToFill(center, shapeId, sizeOfSquar);
     for (int i = 0; i < this.numberOfBalls; i++) {
       double radius = sqrt(area_1 * (i + 1));
-      add(DraggableBall(position, radius));
-      add(ShapeToFill(center, shapeId));
-      position += Vector2(-10, 0);
+      position += Vector2(offSetXEach, 40 * (i % 4));
+      balls.add(DraggableBall(position, radius, shape!));
+      position += Vector2(0, -40 * (i % 4));
+    }
+    add(shape!);
+    balls.forEach((element) {
+      add(element);
+    });
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (checkWinCondition()) {
+      print("YOU WON!!!");
+      pauseEngine();
+      showAlertDialog(context);
     }
   }
+
+  bool checkWinCondition() {
+    bool ans = true;
+    int ballsIn = 0;
+    balls.forEach((ball) {
+      if (ball.inSide) {
+        ballsIn += 1;
+      }
+      if (!ball.inSide) {
+        ans = false;
+      }
+    });
+
+    print("$ballsIn, out of  $numberOfBalls!");
+
+    return ans;
+  }
+}
+
+showAlertDialog(BuildContext context) {
+  // set up the button
+  Widget okButton = TextButton(
+    child: Text("OK"),
+    onPressed: () {},
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text("Congratulations! You passed this level."),
+    content: Text("Oh my, this dude is doing it!!"),
+    actions: [
+      okButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }
