@@ -40,15 +40,23 @@ class DraggableBall extends Ball with Draggable, Tappable {
     return shape.IsBallInSide(this);
   }
 
+  double force = 0.03;
+
   @override
   void update(double dt) {
-    super.update(dt);
     inSide = isInSideShape() && (!isCollidabe);
+    MassData mass = body.getMassData();
+    mass.mass = inSide ? 0.03 : 0.01;
+    body.setMassData(mass);
+    // body.linearDamping = inSide ? 2.6 : 1;
+    // force = inSide ? 0.0001 : 0.01;
+    Vector2 worldDelta;
 
     if (dragOn) {
-      final worldDelta = Vector2(-1, -1)
+      worldDelta = Vector2(-1, -1)
         ..multiply(body.position - touch + initialTouchOffSet);
-      body.applyForce(worldDelta * 800);
+      worldDelta.scale(force);
+      body.applyForce(worldDelta);
     } else {
       if (isCollidabe) {
         if (!beenTappedToStayNotCollidable) {
@@ -62,7 +70,7 @@ class DraggableBall extends Ball with Draggable, Tappable {
         }
       }
     }
-
+    super.update(dt);
     world.stepDt(dt);
   }
 
@@ -198,18 +206,24 @@ class Ball extends BodyComponent {
 
     final fixtureDef = FixtureDef(shape)
       ..restitution = 1.5
-      ..density = 1.0 / (math.pow(radius, 2))
-      ..friction = 0.8;
+      ..density = 0.1 / (radius * radius)
+      ..friction = 0.0;
 
     final bodyDef = BodyDef()
       // To be able to determine object in collision
       ..userData = this
-      ..angularDamping = 0.8
-      ..linearDamping = 1.8
+      ..angularDamping = 1.8
+      ..linearDamping = .8
       ..position = _position
       ..type = BodyType.dynamic;
 
-    return world.createBody(bodyDef)..createFixture(fixtureDef);
+    Body bodyRet = world.createBody(bodyDef)..createFixture(fixtureDef);
+
+    MassData mass = bodyRet.getMassData();
+    mass.mass = 0.0001;
+    bodyRet.setMassData(mass);
+
+    return bodyRet;
   }
 
   @override
