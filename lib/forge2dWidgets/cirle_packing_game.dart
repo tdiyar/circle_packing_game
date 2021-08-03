@@ -22,7 +22,7 @@ class CirlePackingGame extends Forge2DGame
   List<DraggableBall> balls = <DraggableBall>[];
   ShapeToFill? shape;
   BuildContext context;
-
+  final tolerance = 2;
   @override
   CirlePackingGame(this.shapeId, this.numberOfBalls, this.context)
       : super(gravity: Vector2.all(0.0), zoom: 1.0);
@@ -36,9 +36,9 @@ class CirlePackingGame extends Forge2DGame
 
     assert(numberOfBalls > 0);
 
-    final area_1 = 3.14159265 *
-        (sizeOfSquar / SIZES_FOR_SQUARE[numberOfBalls - 1]) *
-        (sizeOfSquar / SIZES_FOR_SQUARE[numberOfBalls - 1]);
+    final area_1 = 4 *
+        ((sizeOfSquar - tolerance) / SIZES_FOR_SQUARE[numberOfBalls - 1]) *
+        ((sizeOfSquar - tolerance) / SIZES_FOR_SQUARE[numberOfBalls - 1]);
     print(area_1);
 
     Vector2 position = center - Vector2(190, 250);
