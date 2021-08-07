@@ -18,7 +18,8 @@ import 'shape_to_fill.dart';
 
 class DraggableBall extends Ball with Draggable {
   ShapeToFill shape;
-  DraggableBall(Vector2 position, double radius, this.shape)
+  double yOffSet;
+  DraggableBall(Vector2 position, double radius, this.shape, this.yOffSet)
       : super(position, radius: radius) {
     originalPaint = Paint()..color = Colors.amber;
     paint = isCollidabe ? originalPaint : paintCollide;
@@ -33,7 +34,7 @@ class DraggableBall extends Ball with Draggable {
   bool beenTappedToStayNotCollidable = false;
   Vector2 touch = Vector2(0, 0);
   Vector2 initialTouchOffSet = Vector2(0, 0);
-  double yOffSet = 80;
+
   bool inSide = false;
   bool justInSide = false;
   int countFrame = 0;
@@ -64,7 +65,6 @@ class DraggableBall extends Ball with Draggable {
 
       worldDelta = worldDelta * worldDelta.length;
       worldDelta.scale(-force);
-      print("${worldDelta.length} - absolute ");
       body.applyForce(worldDelta);
       // body.applyLinearImpulse(worldDelta);
     } else {
@@ -121,8 +121,6 @@ class DraggableBall extends Ball with Draggable {
   }
 
   bool onTapDone() {
-    print("TAP");
-
     if (!isCollidabe) {
       isCollidabe = !isCollidabe;
       beenTappedToStayNotCollidable = true;

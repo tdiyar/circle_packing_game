@@ -23,6 +23,7 @@ class CirlePackingGame extends Forge2DGame with HasDraggableComponents {
   List<DraggableBall> balls = <DraggableBall>[];
   ShapeToFill? shape;
   BuildContext context;
+  double yOffSet = 0;
   final tolerance = 50;
   @override
   CirlePackingGame(this.shapeId, this.numberOfBalls, this.context)
@@ -30,6 +31,8 @@ class CirlePackingGame extends Forge2DGame with HasDraggableComponents {
 
   @override
   Future<void> onLoad() async {
+    yOffSet =
+        AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
     await super.onLoad();
     final boundaries = createBoundaries(this);
     boundaries.forEach(add);
@@ -49,7 +52,7 @@ class CirlePackingGame extends Forge2DGame with HasDraggableComponents {
     for (int i = 0; i < this.numberOfBalls; i++) {
       double radius = sqrt(area_1 * (i + 1));
       position += Vector2(offSetXEach, 40 * (i % 4));
-      balls.add(DraggableBall(position, radius, shape!));
+      balls.add(DraggableBall(position, radius, shape!, yOffSet));
       position += Vector2(0, -40 * (i % 4));
     }
     add(shape!);
