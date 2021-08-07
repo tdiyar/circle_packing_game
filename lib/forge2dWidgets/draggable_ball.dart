@@ -16,7 +16,7 @@ import 'package:flame/game.dart';
 
 import 'shape_to_fill.dart';
 
-class DraggableBall extends Ball with Draggable, Tappable {
+class DraggableBall extends Ball with Draggable {
   ShapeToFill shape;
   DraggableBall(Vector2 position, double radius, this.shape)
       : super(position, radius: radius) {
@@ -32,31 +32,43 @@ class DraggableBall extends Ball with Draggable, Tappable {
   bool isCollidabe = true;
   bool beenTappedToStayNotCollidable = false;
   Vector2 touch = Vector2(0, 0);
+  Vector2 touchInitial = Vector2(0, 0);
   Vector2 initialTouchOffSet = Vector2(0, 0);
-  double yOffSet = 80;
+  double yOffSet = 100;
   bool inSide = false;
+  bool justInSide = false;
 
   bool isInSideShape() {
     return shape.IsBallInSide(this);
   }
 
-  double force = 0.03;
+  bool isJustInSideShape() {
+    return shape.isJustInSideShape(this);
+  }
+
+  double force = 10;
+
+  int frameCount = 0;
 
   @override
   void update(double dt) {
+    frameCount += 1;
+    justInSide = isJustInSideShape();
     inSide = isInSideShape() && (!isCollidabe);
     MassData mass = body.getMassData();
-    mass.mass = inSide ? 0.03 : 0.01;
+    mass.mass = justInSide ? 1 : 0.1;
     body.setMassData(mass);
-    // body.linearDamping = inSide ? 2.6 : 1;
-    // force = inSide ? 0.0001 : 0.01;
+    body.linearDamping = justInSide ? 22.6 : 12.6;
     Vector2 worldDelta;
 
     if (dragOn) {
-      worldDelta = Vector2(-1, -1)
-        ..multiply(body.position - touch + initialTouchOffSet);
-      worldDelta.scale(force);
+      worldDelta = body.position - touch + initialTouchOffSet;
+
+      worldDelta = worldDelta * worldDelta.length;
+      worldDelta.scale(-force);
+
       body.applyForce(worldDelta);
+      // body.applyLinearImpulse(worldDelta);
     } else {
       if (isCollidabe) {
         if (!beenTappedToStayNotCollidable) {
@@ -71,7 +83,7 @@ class DraggableBall extends Ball with Draggable, Tappable {
       }
     }
     super.update(dt);
-    world.stepDt(dt);
+    // print("$dt - time dt - in dranggle ball");
   }
 
   @override
@@ -110,8 +122,8 @@ class DraggableBall extends Ball with Draggable, Tappable {
     return ans;
   }
 
-  @override
-  bool onTapUp(TapUpInfo details) {
+  // ignore: non_constant_identifier_names
+  bool TapHappended() {
     print("TAP");
 
     if (!isCollidabe) {
@@ -138,22 +150,23 @@ class DraggableBall extends Ball with Draggable, Tappable {
   @override
   bool onDragStart(int pointerId, DragStartInfo details) {
     // TODO: Change this to normal; 80???
-
-    touch = Vector2(details.raw.localPosition.dx,
-        -(details.raw.localPosition.dy - yOffSet));
+    touchInitial =
+        Vector2(details.raw.localPosition.dx, -(details.raw.localPosition.dy));
+    touch =
+        Vector2(details.raw.localPosition.dx, -(details.raw.localPosition.dy));
     initialTouchOffSet = touch - body.position;
-    initialTouchOffSet = initialTouchOffSet - Vector2(0, yOffSet); //yOffSet
 
     paint = isCollidabe ? originalPaint1 : paintCollide1;
     dragOn = true;
+    frameCount = 0;
 
     return true;
   }
 
   @override
   bool onDragUpdate(int pointerId, DragUpdateInfo details) {
-    touch = Vector2(details.raw.localPosition.dx,
-        -(details.raw.localPosition.dy - yOffSet));
+    touch =
+        Vector2(details.raw.localPosition.dx, -(details.raw.localPosition.dy));
     return true;
   }
 
@@ -168,6 +181,10 @@ class DraggableBall extends Ball with Draggable, Tappable {
       });
     }
 
+    if (frameCount < 5) {
+      TapHappended();
+    }
+
     return true;
   }
 }
@@ -177,8 +194,6 @@ class Ball extends BodyComponent {
   bool giveNudge = false;
   final double radius;
   final Vector2 _position;
-  double _timeSinceNudge = 0.0;
-  static const double _minNudgeRest = 2.0;
 
   final Paint _blue = BasicPalette.blue.paint();
 
@@ -231,18 +246,5 @@ class Ball extends BodyComponent {
     super.renderCircle(c, center, radius);
     final lineRotation = Offset(0, radius);
     c.drawLine(center, center + lineRotation, _blue);
-  }
-
-  @override
-  void update(double t) {
-    super.update(t);
-    _timeSinceNudge += t;
-    if (giveNudge) {
-      giveNudge = false;
-      if (_timeSinceNudge > _minNudgeRest) {
-        body.applyLinearImpulse(Vector2(0, 1000));
-        _timeSinceNudge = 0.0;
-      }
-    }
   }
 }

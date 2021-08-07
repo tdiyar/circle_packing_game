@@ -16,8 +16,7 @@ import 'constantCircleSizes.dart'; // SIZES_FOR_SQUARE
 import 'package:provider/provider.dart';
 import '../main.dart';
 
-class CirlePackingGame extends Forge2DGame
-    with HasDraggableComponents, HasTappableComponents {
+class CirlePackingGame extends Forge2DGame with HasDraggableComponents {
   int shapeId;
   int numberOfBalls;
   double sizeOfSquar = 140.0;
@@ -62,6 +61,12 @@ class CirlePackingGame extends Forge2DGame
   @override
   void update(double dt) {
     super.update(dt);
+    world.stepDt(dt);
+    world.stepDt(dt);
+    world.stepDt(dt);
+    world.stepDt(dt);
+
+    // print("$dt - time dt");
     if (checkWinCondition()) {
       var level_array = context.read<JustWon>();
       level_array.update_level(shapeId, numberOfBalls - 1);
@@ -84,7 +89,6 @@ class CirlePackingGame extends Forge2DGame
     });
 
     print("$ballsIn, out of  $numberOfBalls!");
-
     return ans;
   }
 }
