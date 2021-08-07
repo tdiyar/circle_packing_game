@@ -16,7 +16,7 @@ import 'package:flame/game.dart';
 
 import 'shape_to_fill.dart';
 
-class DraggableBall extends Ball with Draggable, Tappable {
+class DraggableBall extends Ball with Draggable {
   ShapeToFill shape;
   DraggableBall(Vector2 position, double radius, this.shape)
       : super(position, radius: radius) {
@@ -32,8 +32,9 @@ class DraggableBall extends Ball with Draggable, Tappable {
   bool isCollidabe = true;
   bool beenTappedToStayNotCollidable = false;
   Vector2 touch = Vector2(0, 0);
+  Vector2 touchInitial = Vector2(0, 0);
   Vector2 initialTouchOffSet = Vector2(0, 0);
-  double yOffSet = 80;
+  double yOffSet = 100;
   bool inSide = false;
   bool justInSide = false;
 
@@ -47,8 +48,11 @@ class DraggableBall extends Ball with Draggable, Tappable {
 
   double force = 10;
 
+  int frameCount = 0;
+
   @override
   void update(double dt) {
+    frameCount += 1;
     justInSide = isJustInSideShape();
     inSide = isInSideShape() && (!isCollidabe);
     MassData mass = body.getMassData();
@@ -62,7 +66,7 @@ class DraggableBall extends Ball with Draggable, Tappable {
 
       worldDelta = worldDelta * worldDelta.length;
       worldDelta.scale(-force);
-      print("${worldDelta.length} - absolute ");
+
       body.applyForce(worldDelta);
       // body.applyLinearImpulse(worldDelta);
     } else {
@@ -118,8 +122,8 @@ class DraggableBall extends Ball with Draggable, Tappable {
     return ans;
   }
 
-  @override
-  bool onTapUp(TapUpInfo details) {
+  // ignore: non_constant_identifier_names
+  bool TapHappended() {
     print("TAP");
 
     if (!isCollidabe) {
@@ -146,22 +150,23 @@ class DraggableBall extends Ball with Draggable, Tappable {
   @override
   bool onDragStart(int pointerId, DragStartInfo details) {
     // TODO: Change this to normal; 80???
-
-    touch = Vector2(details.raw.localPosition.dx,
-        -(details.raw.localPosition.dy - yOffSet));
+    touchInitial =
+        Vector2(details.raw.localPosition.dx, -(details.raw.localPosition.dy));
+    touch =
+        Vector2(details.raw.localPosition.dx, -(details.raw.localPosition.dy));
     initialTouchOffSet = touch - body.position;
-    initialTouchOffSet = initialTouchOffSet - Vector2(0, yOffSet); //yOffSet
 
     paint = isCollidabe ? originalPaint1 : paintCollide1;
     dragOn = true;
+    frameCount = 0;
 
     return true;
   }
 
   @override
   bool onDragUpdate(int pointerId, DragUpdateInfo details) {
-    touch = Vector2(details.raw.localPosition.dx,
-        -(details.raw.localPosition.dy - yOffSet));
+    touch =
+        Vector2(details.raw.localPosition.dx, -(details.raw.localPosition.dy));
     return true;
   }
 
@@ -174,6 +179,10 @@ class DraggableBall extends Ball with Draggable, Tappable {
       body.fixtures.forEach((element) {
         element.setSensor(false);
       });
+    }
+
+    if (frameCount < 5) {
+      TapHappended();
     }
 
     return true;

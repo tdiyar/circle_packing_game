@@ -14,8 +14,7 @@ import 'wall.dart'; // createBoundaries
 import 'shape_to_fill.dart'; // ShapeToFill
 import 'constantCircleSizes.dart'; // SIZES_FOR_SQUARE
 
-class CirlePackingGame extends Forge2DGame
-    with HasDraggableComponents, HasTappableComponents {
+class CirlePackingGame extends Forge2DGame with HasDraggableComponents {
   int shapeId;
   int numberOfBalls;
   double sizeOfSquar = 140.0;
