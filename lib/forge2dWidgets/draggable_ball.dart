@@ -16,7 +16,7 @@ import 'package:flame/game.dart';
 
 import 'shape_to_fill.dart';
 
-class DraggableBall extends Ball with Draggable, Tappable {
+class DraggableBall extends Ball with Draggable {
   ShapeToFill shape;
   DraggableBall(Vector2 position, double radius, this.shape)
       : super(position, radius: radius) {
@@ -36,6 +36,7 @@ class DraggableBall extends Ball with Draggable, Tappable {
   double yOffSet = 80;
   bool inSide = false;
   bool justInSide = false;
+  int countFrame = 0;
 
   bool isInSideShape() {
     return shape.IsBallInSide(this);
@@ -49,6 +50,7 @@ class DraggableBall extends Ball with Draggable, Tappable {
 
   @override
   void update(double dt) {
+    countFrame += 1;
     justInSide = isJustInSideShape();
     inSide = isInSideShape() && (!isCollidabe);
     MassData mass = body.getMassData();
@@ -118,8 +120,7 @@ class DraggableBall extends Ball with Draggable, Tappable {
     return ans;
   }
 
-  @override
-  bool onTapUp(TapUpInfo details) {
+  bool onTapDone() {
     print("TAP");
 
     if (!isCollidabe) {
@@ -145,6 +146,7 @@ class DraggableBall extends Ball with Draggable, Tappable {
 
   @override
   bool onDragStart(int pointerId, DragStartInfo details) {
+    countFrame = 0;
     // TODO: Change this to normal; 80???
 
     touch = Vector2(details.raw.localPosition.dx,
@@ -168,12 +170,17 @@ class DraggableBall extends Ball with Draggable, Tappable {
   @override
   bool onDragEnd(int pointerId, DragEndInfo details) {
     dragOn = false;
+
     if (DoesNotOverlapWithOthers()) {
       isCollidabe = false;
       paint = isCollidabe ? originalPaint : paintCollide;
       body.fixtures.forEach((element) {
         element.setSensor(false);
       });
+    }
+
+    if (countFrame < 10) {
+      onTapDone();
     }
 
     return true;
