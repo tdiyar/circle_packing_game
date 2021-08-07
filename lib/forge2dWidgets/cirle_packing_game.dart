@@ -13,6 +13,8 @@ import 'draggable_ball.dart';
 import 'wall.dart'; // createBoundaries
 import 'shape_to_fill.dart'; // ShapeToFill
 import 'constantCircleSizes.dart'; // SIZES_FOR_SQUARE
+import 'package:provider/provider.dart';
+import '../main.dart';
 
 class CirlePackingGame extends Forge2DGame
     with HasDraggableComponents, HasTappableComponents {
@@ -22,7 +24,7 @@ class CirlePackingGame extends Forge2DGame
   List<DraggableBall> balls = <DraggableBall>[];
   ShapeToFill? shape;
   BuildContext context;
-  final tolerance = 2;
+  final tolerance = 50;
   @override
   CirlePackingGame(this.shapeId, this.numberOfBalls, this.context)
       : super(gravity: Vector2.all(0.0), zoom: 1.0);
@@ -61,9 +63,11 @@ class CirlePackingGame extends Forge2DGame
   void update(double dt) {
     super.update(dt);
     if (checkWinCondition()) {
+      var level_array = context.read<JustWon>();
+      level_array.update_level(shapeId, numberOfBalls - 1);
       print("YOU WON!!!");
       pauseEngine();
-      showAlertDialog(context);
+      showAlertDialog(context, shapeId);
     }
   }
 
@@ -85,11 +89,21 @@ class CirlePackingGame extends Forge2DGame
   }
 }
 
-showAlertDialog(BuildContext context) {
+showAlertDialog(BuildContext context, int shapeId) {
   // set up the button
   Widget okButton = TextButton(
     child: Text("OK"),
-    onPressed: () {},
+    onPressed: () {
+      Navigator.pop(context);
+      Navigator.pop(context);
+      Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LevelSelect(shapeId),
+        ),
+      );
+    },
   );
 
   // set up the AlertDialog
