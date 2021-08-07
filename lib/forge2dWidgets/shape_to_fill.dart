@@ -30,6 +30,21 @@ class ShapeToFill extends BodyComponent {
     return inY && inX;
   }
 
+  bool isJustInSideShape(DraggableBall ball) {
+    double radius = 0;
+    double xball = ball.body.position.x;
+    double yball = ball.body.position.y;
+
+    double sizeOfSquarTemp = sizeOfSquar - radius;
+
+    bool inX = (xball <= (worldCenter.x + sizeOfSquarTemp)) &&
+        (xball >= (worldCenter.x - sizeOfSquarTemp));
+    bool inY = (yball <= (worldCenter.y + sizeOfSquarTemp)) &&
+        (yball >= (worldCenter.y - sizeOfSquarTemp));
+
+    return inY && inX;
+  }
+
   @override
   Body createBody() {
     if (shapeId == 0) {

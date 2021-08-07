@@ -60,6 +60,12 @@ class CirlePackingGame extends Forge2DGame
   @override
   void update(double dt) {
     super.update(dt);
+    world.stepDt(dt);
+    world.stepDt(dt);
+    world.stepDt(dt);
+    world.stepDt(dt);
+
+    // print("$dt - time dt");
     if (checkWinCondition()) {
       print("YOU WON!!!");
       pauseEngine();
@@ -80,7 +86,6 @@ class CirlePackingGame extends Forge2DGame
     });
 
     print("$ballsIn, out of  $numberOfBalls!");
-
     return ans;
   }
 }
