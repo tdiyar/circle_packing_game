@@ -72,7 +72,7 @@ class CirlePackingGame extends Forge2DGame with HasDraggableComponents {
     // print("$dt - time dt");
     if (checkWinCondition()) {
       var level_array = context.read<JustWon>();
-      level_array.update_level(shapeId, numberOfBalls - 1);
+      level_array.update_level(shapeId, numberOfBalls - 1, true);
       print("YOU WON!!!");
       pauseEngine();
       showAlertDialog(context, shapeId);
