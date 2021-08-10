@@ -24,15 +24,17 @@ class CirlePackingGame extends Forge2DGame with HasDraggableComponents {
   ShapeToFill? shape;
   BuildContext context;
   double yOffSet = 0;
-  final tolerance = 50;
+  final tolerance = 1;
   @override
   CirlePackingGame(this.shapeId, this.numberOfBalls, this.context)
       : super(gravity: Vector2.all(0.0), zoom: 1.0);
 
   @override
   Future<void> onLoad() async {
-    yOffSet =
-        AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
+    // yOffSet =
+    //     AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
+    yOffSet = MediaQuery.of(context).padding.top; // without AppBar
+
     await super.onLoad();
     final boundaries = createBoundaries(this);
     boundaries.forEach(add);
@@ -73,7 +75,6 @@ class CirlePackingGame extends Forge2DGame with HasDraggableComponents {
     if (checkWinCondition()) {
       var level_array = context.read<JustWon>();
       level_array.update_level(shapeId, numberOfBalls - 1, true);
-      print("YOU WON!!!");
       pauseEngine();
       showAlertDialog(context, shapeId);
     }
@@ -91,7 +92,7 @@ class CirlePackingGame extends Forge2DGame with HasDraggableComponents {
       }
     });
 
-    print("$ballsIn, out of  $numberOfBalls!");
+    // print("$ballsIn, out of  $numberOfBalls!");
     return ans;
   }
 }

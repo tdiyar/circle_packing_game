@@ -48,7 +48,7 @@ class ShapeToFill extends BodyComponent {
   @override
   Body createBody() {
     if (shapeId == 0) {
-      print("making a square");
+      // print("making a square");
     }
     worldCenter = worldCenter + Vector2(0, 100);
 
