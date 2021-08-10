@@ -26,6 +26,8 @@ class Wall extends BodyComponent {
   final Vector2 end;
 
   Wall(this.start, this.end);
+  @override
+  bool debugMode = false;
 
   @override
   Body createBody() {

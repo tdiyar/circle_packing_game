@@ -16,16 +16,23 @@ class MyGameApp extends StatelessWidget {
     shapeId = args.shapeId;
     numberOfBalls = args.numberOfBalls;
 
-    return MaterialApp(
-      title: 'Welcome to Flutter',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Welcome to Flutter'),
-        ),
-        body: GameWidget(
+    return Container(
+      color: Theme.of(context).colorScheme.primaryVariant,
+      child: SafeArea(
+        child: GameWidget(
           game: CirlePackingGame(shapeId, numberOfBalls, context),
         ),
       ),
     );
+
+    // MaterialApp(
+    //   home: Scaffold(
+    //     body: SafeArea(
+    //       child: GameWidget(
+    //         game: CirlePackingGame(shapeId, numberOfBalls, context),
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 }
