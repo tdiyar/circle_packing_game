@@ -191,24 +191,15 @@ class Ball extends BodyComponent {
   bool giveNudge = false;
   final double radius;
   final Vector2 _position;
+  bool speed;
+  double angularDamping;
 
   final Paint _blue = BasicPalette.blue.paint();
 
-  Ball(this._position, {this.radius = 2}) {
-    originalPaint = randomPaint();
+  Ball(this._position,
+      {this.radius = 2, this.speed = false, this.angularDamping = 0}) {
+    originalPaint = Paint()..color = Colors.teal.shade200;
     paint = originalPaint;
-  }
-
-  Paint randomPaint() {
-    final rng = math.Random();
-    return PaletteEntry(
-      Color.fromARGB(
-        100 + rng.nextInt(155),
-        100 + rng.nextInt(155),
-        100 + rng.nextInt(155),
-        255,
-      ),
-    ).paint();
   }
 
   @override
@@ -218,23 +209,22 @@ class Ball extends BodyComponent {
 
     final fixtureDef = FixtureDef(shape)
       ..restitution = 1.5
-      ..density = 0.1 / (radius * radius)
+      ..density = 0.01
       ..friction = 0.0;
 
     final bodyDef = BodyDef()
       // To be able to determine object in collision
       ..userData = this
-      ..angularDamping = 1.8
-      ..linearDamping = .8
+      ..angularDamping = .8
+      ..linearDamping = angularDamping
       ..position = _position
-      ..type = BodyType.dynamic;
+      ..type = BodyType.dynamic
+      ..linearVelocity = speed
+          ? Vector2(400 * (math.Random().nextDouble() - 0.5),
+              400 * (math.Random().nextDouble() - 0.5))
+          : Vector2(0, 0);
 
     Body bodyRet = world.createBody(bodyDef)..createFixture(fixtureDef);
-
-    MassData mass = bodyRet.getMassData();
-    mass.mass = 0.0001;
-    bodyRet.setMassData(mass);
-
     return bodyRet;
   }
 

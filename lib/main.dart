@@ -28,7 +28,7 @@ void SaveFile(String content) async {
 
 void init(BuildContext context) async {
   File file = File(await getFilePath());
-  if (file.exists() == false) {
+  if (await file.exists() == false) {
     return;
   }
   String fileContent = await file.readAsString();
