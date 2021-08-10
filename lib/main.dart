@@ -28,6 +28,9 @@ void SaveFile(String content) async {
 
 void init(BuildContext context) async {
   File file = File(await getFilePath());
+  if (file.exists() == false) {
+    return;
+  }
   String fileContent = await file.readAsString();
 
   var level_array = context.read<JustWon>();
