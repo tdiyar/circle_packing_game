@@ -28,7 +28,7 @@ void SaveFile(String content) async {
 
 void init(BuildContext context) async {
   File file = File(await getFilePath());
-  if (file.exists() == false) {
+  if (await file.exists() == false) {
     return;
   }
   String fileContent = await file.readAsString();
@@ -42,14 +42,16 @@ void init(BuildContext context) async {
 }
 
 class JustWon with ChangeNotifier {
-  var levels = List.generate(1, (i) => List.generate(20, (j) => false));
+  var levels = List.generate(1, (i) => List.generate(18, (j) => false));
+  var num_of_levels = 18;
+  var num_of_themes = 1;
 
   void update_level(int theme, int lvl_number, bool value) {
     levels[theme][lvl_number] = value;
     String cur = '';
 
     for (var i = 0; i < 1; i++) {
-      for (var j = 0; j < 20; j++) {
+      for (var j = 0; j < num_of_levels; j++) {
         cur += levels[i][j] ? '1' : '0';
       }
     }

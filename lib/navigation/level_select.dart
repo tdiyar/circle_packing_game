@@ -20,17 +20,28 @@ class _LevelSelectState extends State<LevelSelect> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      /*appBar: AppBar(
         title: Text('Level Selection'),
-      ),
+      ),*/
       body: ListView.builder(
-        itemCount: 39,
+        padding: EdgeInsets.all(80),
+        itemCount: 11,
         itemBuilder: (context, i) {
           if (i.isOdd) {
-            return const Divider();
+            return const Divider(
+              height: 70,
+            );
           }
           final index = i ~/ 2;
-          return _buildRow(index + 1);
+          //return _buildRow(index + 1);
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildRow(index * 3 + 1),
+              _buildRow(index * 3 + 2),
+              _buildRow(index * 3 + 3),
+            ],
+          );
         },
       ),
     );
@@ -44,7 +55,7 @@ class _LevelSelectState extends State<LevelSelect> {
       color = Colors.orange;
     }
 
-    return ElevatedButton(
+    /*return FloatingActionButton.extended(
       onPressed: () {
         Navigator.push(
           context,
@@ -55,8 +66,27 @@ class _LevelSelectState extends State<LevelSelect> {
           ),
         );
       },
-      style: ButtonStyle(backgroundColor: MaterialStateProperty.all(color)),
-      child: Text('$_levelNumber'),
-    );
+      backgroundColor: color,
+      label: Text('$_levelNumber'),
+    );*/
+
+    return SizedBox(
+        height: 70,
+        width: 70,
+        child: FloatingActionButton.extended(
+          heroTag: '$_levelNumber',
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyGameApp(),
+                settings:
+                    RouteSettings(arguments: ScreenArguments(0, _levelNumber)),
+              ),
+            );
+          },
+          backgroundColor: color,
+          label: Text('$_levelNumber'),
+        ));
   }
 }
