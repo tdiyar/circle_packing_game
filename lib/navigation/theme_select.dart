@@ -1,4 +1,3 @@
-import 'package:flame/palette.dart';
 import 'package:flame_forge2d/body_component.dart';
 import 'package:provider/provider.dart';
 
@@ -38,10 +37,10 @@ class _ThemeSelectState extends State<ThemeSelect> {
     _buildThemes();
     final index = 0;
     final themeId = index;
-    var level_array = context.read<JustWon>();
+    var levelArray = context.read<JustWon>();
     int cnt = 0;
-    for (int i = 0; i < level_array.levels[index].length; i++) {
-      if (level_array.levels[index][i] == true) {
+    for (int i = 0; i < levelArray.levels[index].length; i++) {
+      if (levelArray.levels[index][i] == true) {
         cnt = cnt + 1;
       }
     }

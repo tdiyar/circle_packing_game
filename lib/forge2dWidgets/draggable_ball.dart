@@ -194,8 +194,6 @@ class Ball extends BodyComponent {
   bool speed;
   double angularDamping;
 
-  final Paint _blue = BasicPalette.blue.paint();
-
   Ball(this._position,
       {this.radius = 2, this.speed = false, this.angularDamping = 0}) {
     originalPaint = Paint()..color = Colors.teal.shade200;

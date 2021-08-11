@@ -74,8 +74,8 @@ class CirlePackingGame extends Forge2DGame with HasDraggableComponents {
 
     // print("$dt - time dt");
     if (checkWinCondition()) {
-      var level_array = context.read<JustWon>();
-      level_array.update_level(shapeId, numberOfBalls - 1, true);
+      var levelArray = context.read<JustWon>();
+      levelArray.update_level(shapeId, numberOfBalls - 1, true);
       pauseEngine();
       showAlertDialog(context, shapeId);
     }
@@ -83,11 +83,8 @@ class CirlePackingGame extends Forge2DGame with HasDraggableComponents {
 
   bool checkWinCondition() {
     bool ans = true;
-    int ballsIn = 0;
     balls.forEach((ball) {
-      if (ball.inSide) {
-        ballsIn += 1;
-      }
+      if (ball.inSide) {}
       if (!ball.inSide) {
         ans = false;
       }

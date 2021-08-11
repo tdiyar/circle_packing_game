@@ -21,6 +21,7 @@ Future<String> getFilePath() async {
   return filePath;
 }
 
+// ignore: non_constant_identifier_names
 void SaveFile(String content) async {
   File file = File(await getFilePath());
   file.writeAsString(content);
@@ -33,21 +34,23 @@ void init(BuildContext context) async {
   }
   String fileContent = await file.readAsString();
 
-  var level_array = context.read<JustWon>();
+  var levelArray = context.read<JustWon>();
 
   for (var i = 0; i < fileContent.length; i++) {
     bool value = fileContent[i] == '1' ? true : false;
-    level_array.update_level(i ~/ 20, i % 20, value);
+    levelArray.update_level(i ~/ 20, i % 20, value);
   }
 }
 
 class JustWon with ChangeNotifier {
-  var levels = List.generate(1, (i) => List.generate(18, (j) => false));
-  var num_of_levels = 18;
-  var num_of_themes = 1;
+  static const num_of_levels = 18;
+  static const num_of_themes = 1;
+  var levels =
+      List.generate(num_of_themes, (i) => List.generate(18, (j) => false));
 
-  void update_level(int theme, int lvl_number, bool value) {
-    levels[theme][lvl_number] = value;
+  // ignore: non_constant_identifier_names
+  Future<void> update_level(int theme, int lvlNumber, bool value) async {
+    levels[theme][lvlNumber] = value;
     String cur = '';
 
     for (var i = 0; i < 1; i++) {
