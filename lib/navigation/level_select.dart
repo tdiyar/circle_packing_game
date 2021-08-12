@@ -50,12 +50,12 @@ class _LevelSelectState extends State<LevelSelect> {
             },
           )),
       body: ListView.builder(
-        padding: EdgeInsets.only(top: height / 11.575),
+        padding: EdgeInsets.only(top: height / 25.575),
         itemCount: 11,
         itemBuilder: (context, i) {
           if (i.isOdd) {
             return Divider(
-              height: height / 13.2285714286,
+              height: height / 14.2285714286,
             );
           }
           final index = i ~/ 2;

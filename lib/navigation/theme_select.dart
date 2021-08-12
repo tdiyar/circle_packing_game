@@ -98,7 +98,7 @@ class MainMenuGame extends Forge2DGame with HasDraggableComponents {
   @override
   Future<void> onLoad() async {
     Vector2 position = screenToWorld(viewport.effectiveSize / 2);
-    double radius = 120;
+    double radius = 100;
     await super.onLoad();
 
     final boundaries = createBoundaries(this);
@@ -148,14 +148,17 @@ class DraggableRectThemeButton extends BodyComponent with Draggable {
       text: "$cnt / 20",
       style: TextStyle(
         color: Colors.teal.shade200,
-        fontSize: 20,
+        fontSize: 30,
+
         // fontFamily: icon.fontFamily,
       ),
     );
 
     textPainter.layout();
     final lineRotation = Offset(-textPainter.width / 2 + position.x,
-        -textPainter.height / 2 + position.y);
+        -textPainter.height / 2 - position.y);
+    canvas.rotate(3.14159);
+    canvas.scale(-1, 1);
     textPainter.paint(canvas, lineRotation);
   }
 

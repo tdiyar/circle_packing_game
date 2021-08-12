@@ -32,9 +32,9 @@ class CirlePackingGame extends Forge2DGame with HasDraggableComponents {
 
   @override
   Future<void> onLoad() async {
-    // yOffSet =
-    //     AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
-    yOffSet = MediaQuery.of(context).padding.top; // without AppBar
+    yOffSet =
+        AppBar().preferredSize.height + MediaQuery.of(context).padding.top;
+    // yOffSet = MediaQuery.of(context).padding.top; // without AppBar
 
     await super.onLoad();
     final boundaries = createBoundaries(this);
@@ -89,7 +89,6 @@ class CirlePackingGame extends Forge2DGame with HasDraggableComponents {
         ans = false;
       }
     });
-
     // print("$ballsIn, out of  $numberOfBalls!");
     return ans;
   }
@@ -97,8 +96,15 @@ class CirlePackingGame extends Forge2DGame with HasDraggableComponents {
 
 showAlertDialog(BuildContext context, int shapeId) {
   // set up the button
-  Widget okButton = TextButton(
-    child: Text("OK"),
+  Widget okButton = OutlinedButton(
+    style: ButtonStyle(
+      backgroundColor: MaterialStateProperty.all<Color>(Colors.purple.shade400),
+    ),
+    child: Text(
+      "OK",
+      style: TextStyle(
+          fontWeight: FontWeight.bold, color: Colors.teal, fontSize: 19),
+    ),
     onPressed: () {
       Navigator.pop(context);
       Navigator.pop(context);
@@ -114,12 +120,22 @@ showAlertDialog(BuildContext context, int shapeId) {
 
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
-    title: Text("Congratulations! You passed this level."),
-    content: Text("Oh my, this dude is doing it!!"),
-    actions: [
-      okButton,
-    ],
-  );
+      contentPadding: EdgeInsets.all(0),
+      content: Container(
+          color: Colors.teal,
+          width: 148.0,
+          height: 88.0,
+          padding: EdgeInsets.all(10),
+          child: Column(children: [
+            Center(
+              child: Text(
+                "You Passed This Level",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.purple),
+              ),
+            ),
+            okButton,
+          ])));
 
   // show the dialog
   showDialog(
