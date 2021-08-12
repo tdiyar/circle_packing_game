@@ -1,3 +1,4 @@
+import 'package:circle_packing/navigation/theme_select.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -30,9 +31,24 @@ class _LevelSelectState extends State<LevelSelect> {
     print(height);
     return Scaffold(
       backgroundColor: Colors.black,
-      /*appBar: AppBar(
-        title: Text('Level Selection'),
-      ),*/
+      appBar: AppBar(
+          automaticallyImplyLeading: true,
+          backgroundColor: Colors.transparent,
+          title: Text('Level Selection'),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              //Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ThemeSelect(),
+                ),
+              );
+            },
+          )),
       body: ListView.builder(
         padding: EdgeInsets.only(top: height / 11.575),
         itemCount: 11,

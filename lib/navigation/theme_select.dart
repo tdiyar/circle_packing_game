@@ -1,3 +1,4 @@
+import 'package:circle_packing/navigation/main_menu.dart';
 import 'package:flame_forge2d/body_component.dart';
 import 'package:provider/provider.dart';
 
@@ -51,12 +52,37 @@ class _ThemeSelectState extends State<ThemeSelect> {
       );
     }
 
-    return Container(
+    /*return Container(
       color: Theme.of(context).colorScheme.primaryVariant,
       child: SafeArea(
         child: GameWidget(
           game: MainMenuGame(goToTheLevelSelect, cnt),
         ),
+      ),
+    );*/
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+          automaticallyImplyLeading: true,
+          backgroundColor: Colors.transparent,
+          title: Text('Theme Selection'),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              //Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MainMenu(),
+                ),
+              );
+            },
+          )),
+      body: GameWidget(
+        game: MainMenuGame(goToTheLevelSelect, cnt),
       ),
     );
   }

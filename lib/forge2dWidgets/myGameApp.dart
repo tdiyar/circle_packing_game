@@ -1,3 +1,4 @@
+import 'package:circle_packing/navigation/level_select.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -16,7 +17,7 @@ class MyGameApp extends StatelessWidget {
     shapeId = args.shapeId;
     numberOfBalls = args.numberOfBalls;
 
-    return Container(
+    /*return Container(
       color: Theme.of(context).colorScheme.primaryVariant,
       child: SafeArea(
         child: GameWidget(
@@ -24,7 +25,30 @@ class MyGameApp extends StatelessWidget {
         ),
       ),
     );
-
+*/
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+          automaticallyImplyLeading: true,
+          backgroundColor: Colors.transparent,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              //Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LevelSelect(shapeId),
+                ),
+              );
+            },
+          )),
+      body: GameWidget(
+        game: CirlePackingGame(shapeId, numberOfBalls, context),
+      ),
+    );
     // MaterialApp(
     //   home: Scaffold(
     //     body: SafeArea(

@@ -26,7 +26,8 @@ class MainMenu extends StatelessWidget {
     }
 
     return Container(
-      color: Theme.of(context).colorScheme.primaryVariant,
+      // color: Theme.of(context).colorScheme.primaryVariant,
+      color: Colors.black,
       child: SafeArea(
         child: GameWidget(
           game: MainMenuGame(goToThemeSelect),
